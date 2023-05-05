@@ -5,7 +5,7 @@
 ## Installation
 With Go:
 ```bash
-go get github.com/chainbound/cbctl
+go install github.com/chainbound/cbctl@latest
 ```
 
 ## Usage
