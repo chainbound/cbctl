@@ -31,14 +31,7 @@ func NewApp() *cli.App {
 				},
 				Action: func(c *cli.Context) error {
 					key := c.String("key")
-					if key == "" {
-						return fmt.Errorf("API key not provided")
-					}
-
 					url := c.String("url")
-					if url == "" {
-						return fmt.Errorf("URL not provided")
-					}
 
 					path, err := inititalize(url, key)
 					if err != nil {
@@ -77,6 +70,63 @@ func NewApp() *cli.App {
 							println(fmt.Sprintf("  MaxActiveStreams: %d", quota.MaxActiveStreams))
 
 							return nil
+						},
+					},
+					{
+						Name:  "trace",
+						Usage: "Trace transactions or blocks",
+						Subcommands: []*cli.Command{
+							{
+								Name:  "tx",
+								Usage: "Trace a transaction",
+								Flags: []cli.Flag{
+									&cli.StringFlag{
+										Name:     "hash",
+										Aliases:  []string{"H"},
+										Usage:    "The transaction hash to trace",
+										Required: true,
+									},
+									&cli.StringFlag{
+										Name:    "type",
+										Aliases: []string{"t"},
+										Usage:   "The observation type to trace (p2p | fiber | all)",
+										Value:   "all",
+									},
+									&cli.BoolFlag{
+										Name:    "private",
+										Aliases: []string{"p"},
+										Usage:   "Whether or not the transaction is private (sent with your API key)",
+										Value:   false,
+									},
+									&cli.BoolFlag{
+										Name:    "show-source",
+										Aliases: []string{"s"},
+										Usage:   "Whether or not to show the source of the transaction",
+										Value:   false,
+									},
+								},
+								Action: func(c *cli.Context) error {
+									cfg, err := ReadConfig()
+									if err != nil {
+										return fmt.Errorf("Error reading config, did you run cbctl init?: %w", err)
+									}
+
+									hash := c.String("hash")
+									observationType := c.String("type")
+									private := c.Bool("private")
+									showSource := c.Bool("show-source")
+
+									api := api.NewFiberAPI(cfg.Url, cfg.ApiKey)
+									traces, err := api.TraceTransaction(hash, observationType, private)
+									if err != nil {
+										return fmt.Errorf("Error getting quota: %w", err)
+									}
+
+									printTransactionTrace(traces, showSource)
+
+									return nil
+								},
+							},
 						},
 					},
 				},

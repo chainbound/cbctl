@@ -7,8 +7,8 @@ import (
 )
 
 type Config struct {
-	Url    string
-	ApiKey string
+	Url    string `toml:"url"`
+	ApiKey string `toml:"api_key"`
 }
 
 func ReadConfig() (*Config, error) {
