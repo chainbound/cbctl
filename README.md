@@ -18,6 +18,8 @@ cbctl init --key <your_api_key>
 The `fiber` subcommand let's you interact with the Fiber backend.
 
 * `cbctl fiber quota`
+
 Gets your quota for the current billing period.
 * `cbctl fiber trace tx --hash <tx_hash>`
+
 Gets the trace for a transaction. Run `cbctl fiber trace tx --help` for more info.
