@@ -44,7 +44,6 @@ func (f *FiberAPI) GetQuota() (*Quota, error) {
 	}
 
 	f.prepareRequest(req)
-	fmt.Println(req.Header)
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
