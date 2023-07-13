@@ -23,3 +23,7 @@ Gets your quota for the current billing period.
 * `cbctl fiber trace tx --hash <tx_hash>`
 
 Gets the trace for a transaction. Run `cbctl fiber trace tx --help` for more info.
+
+* `cbctl fiber trace block --hash <block_hash>` or `cbctl fiber trace block --number <block_number>`
+
+Gets a block trace. Run `cbctl fiber trace block --help` for more info.
