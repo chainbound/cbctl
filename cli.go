@@ -122,7 +122,65 @@ func NewApp() *cli.App {
 										return fmt.Errorf("Error getting quota: %w", err)
 									}
 
-									printTransactionTrace(traces, showSource)
+									printMessageTrace(traces, showSource)
+
+									return nil
+								},
+							},
+							{
+								Name:  "block",
+								Usage: "Trace a block",
+								Flags: []cli.Flag{
+									&cli.StringFlag{
+										Name:    "hash",
+										Aliases: []string{"H"},
+										Usage:   "The block hash to trace",
+									},
+									&cli.StringFlag{
+										Name:    "number",
+										Aliases: []string{"n"},
+										Usage:   "The block number to trace",
+									},
+									&cli.StringFlag{
+										Name:    "type",
+										Aliases: []string{"t"},
+										Usage:   "The observation type to trace (p2p | fiber | all)",
+										Value:   "all",
+									},
+									&cli.BoolFlag{
+										Name:    "show-source",
+										Aliases: []string{"s"},
+										Usage:   "Whether or not to show the source of the transaction",
+										Value:   false,
+									},
+								},
+								Action: func(c *cli.Context) error {
+									cfg, err := ReadConfig()
+									if err != nil {
+										return fmt.Errorf("Error reading config, did you run cbctl init?: %w", err)
+									}
+
+									hash := c.String("hash")
+									number := c.String("number")
+									if hash == "" && number == "" {
+										return fmt.Errorf("Must specify either a block hash or block number")
+									}
+
+									hashOrNumber := number
+									if hashOrNumber == "" {
+										hashOrNumber = hash
+									}
+
+									observationType := c.String("type")
+									showSource := c.Bool("show-source")
+
+									api := api.NewFiberAPI(cfg.Url, cfg.ApiKey)
+									traces, err := api.TraceBlock(hashOrNumber, observationType)
+									if err != nil {
+										return fmt.Errorf("Error getting quota: %w", err)
+									}
+
+									printMessageTrace(traces, showSource)
 
 									return nil
 								},

@@ -7,7 +7,7 @@ import (
 	"github.com/chainbound/cbctl/api"
 )
 
-func printTransactionTrace(trace []*api.TraceEntry, showSource bool) {
+func printMessageTrace(trace []*api.TraceEntry, showSource bool) {
 	if showSource {
 		fmt.Printf("Timestamp\tNode ID\t\t\tRegion\t\t\tObservation Type\tSource\n")
 	} else {
