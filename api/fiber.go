@@ -157,3 +157,43 @@ func (f *FiberAPI) TraceBlock(hashOrNumber, observationType string) ([]*TraceEnt
 
 	return response.Message, nil
 }
+
+func (f *FiberAPI) TraceBlob(commitment string, observationType string) ([]*TraceEntry, error) {
+	req, err := http.NewRequest("GET", f.url+"/trace/blob/"+commitment, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if observationType == "" {
+		observationType = "all"
+	}
+
+	q := req.URL.Query()
+	q.Add("observation_type", observationType)
+	req.URL.RawQuery = q.Encode()
+
+	f.prepareRequest(req)
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	response := new(Response[[]*TraceEntry])
+	if err := json.Unmarshal(body, response); err != nil {
+		return nil, err
+	}
+
+	if response.Status != "success" {
+		return nil, fmt.Errorf("Error getting quota: %s", response.Error)
+	}
+
+	return response.Message, nil
+}
