@@ -185,6 +185,54 @@ func NewApp() *cli.App {
 									return nil
 								},
 							},
+							{
+								Name:  "blob",
+								Usage: "Trace a blob sidecar (consensus layer)",
+								Flags: []cli.Flag{
+									&cli.StringFlag{
+										Name:     "commitment",
+										Aliases:  []string{"C"},
+										Usage:    "The blob KZG commitment to trace",
+										Required: true,
+									},
+									&cli.StringFlag{
+										Name:    "type",
+										Aliases: []string{"t"},
+										Usage:   "The observation type to trace (p2p | fiber | all)",
+										Value:   "all",
+									},
+									&cli.BoolFlag{
+										Name:    "show-source",
+										Aliases: []string{"s"},
+										Usage:   "Whether or not to show the source of the transaction",
+										Value:   false,
+									},
+								},
+								Action: func(c *cli.Context) error {
+									cfg, err := ReadConfig()
+									if err != nil {
+										return fmt.Errorf("Error reading config, did you run cbctl init?: %w", err)
+									}
+
+									commitment := c.String("commitment")
+									if commitment == "" {
+										return fmt.Errorf("Must specify a blob commitment")
+									}
+
+									observationType := c.String("type")
+									showSource := c.Bool("show-source")
+
+									api := api.NewFiberAPI(cfg.Url, cfg.ApiKey)
+									traces, err := api.TraceBlob(commitment, observationType)
+									if err != nil {
+										return fmt.Errorf("Error getting quota: %w", err)
+									}
+
+									printMessageTrace(traces, showSource)
+
+									return nil
+								},
+							},
 						},
 					},
 				},

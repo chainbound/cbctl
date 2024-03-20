@@ -11,6 +11,11 @@ import (
 )
 
 func printMessageTrace(trace []*api.TraceEntry, showSource bool) {
+	if len(trace) == 0 {
+		fmt.Println("No trace entries found")
+		return
+	}
+
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
 	t.SetStyle(table.StyleLight)
