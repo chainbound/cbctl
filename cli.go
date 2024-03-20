@@ -74,7 +74,7 @@ func NewApp() *cli.App {
 					},
 					{
 						Name:  "trace",
-						Usage: "Trace transactions or blocks",
+						Usage: "Trace transactions, blocks or blobs",
 						Subcommands: []*cli.Command{
 							{
 								Name:  "tx",
